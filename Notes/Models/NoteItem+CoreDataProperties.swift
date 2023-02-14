@@ -2,7 +2,7 @@
 //  NoteItem+CoreDataProperties.swift
 //  Notes
 //
-//  Created by Anna Shuryaeva on 12.02.2023.
+//  Created by Anna Shuryaeva on 13.02.2023.
 //
 //
 
@@ -17,8 +17,9 @@ extension NoteItem {
     }
 
     @NSManaged public var date: Date?
-    @NSManaged public var title: String?
     @NSManaged public var details: String?
+    @NSManaged public var title: String?
+    @NSManaged public var identifier: UUID?
 
 }
 

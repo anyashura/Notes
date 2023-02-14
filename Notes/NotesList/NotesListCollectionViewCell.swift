@@ -58,7 +58,35 @@ class NotesListCollectionViewCell: UICollectionViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        addConstraints()
+    }
+    
+    // MARK: - Functions
+
+    func setup(note: NoteItem) {
+        titleLabel.text = note.title
+        descriptionLabel.text = note.details
         
+        let date = DateFormatter()
+        date.dateFormat = "dd/MM/yy h:mm a"
+        let dateSaved = date.string(from: note.date ?? Date())
+        dateLabel.text = dateSaved
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+    }
+}
+
+extension NotesListCollectionViewCell {
+    
+    private func addSubviews() {
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(dateLabel)
+        contentView.addSubview(descriptionLabel)
+    }
+    
+    func addConstraints() {
         titleLabel.snp.makeConstraints {
             $0.left.equalTo(contentView).inset(5)
             $0.top.right.equalTo(contentView)
@@ -78,33 +106,4 @@ class NotesListCollectionViewCell: UICollectionViewCell {
             $0.right.bottom.equalTo(contentView)
         }
     }
-    
-    // MARK: - Functions
-
-    func setup(note: NoteItem) {
-        titleLabel.text = note.title
-        descriptionLabel.text = note.details
-        
-        let date = DateFormatter()
-        date.dateFormat = "MM/dd/yy/ h:mm a"
-        let dateSaved = date.string(from: note.date ?? Date())
-        dateLabel.text = dateSaved
-    }
-    
-    private func addSubviews() {
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(dateLabel)
-        contentView.addSubview(descriptionLabel)
-    }
-
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
-//    override func setSelected(_ selected: Bool, animated: Bool) {
-//        super.setSelected(selected, animated: animated)
-//    }
-
 }
-
