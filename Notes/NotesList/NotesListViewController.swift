@@ -19,7 +19,14 @@ class NotesListViewController: UIViewController {
     var filteredNotes = [NoteItem]()
     let dataManager = CoreDataManager.shared
     private let editingVC = EditNoteViewController()
-    private let searchController = UISearchController()
+    let searchController = UISearchController()
+    private let searchBar: UISearchBar = {
+        let search = UISearchBar()
+        search.placeholder = "Search"
+        search.isTranslucent = true
+        return search
+    }()
+    
     private var collectionView: UICollectionView?
     
     // MARK: - LifeCycle
@@ -29,13 +36,13 @@ class NotesListViewController: UIViewController {
         firstLaunchCheck()
         configureCollection()
         getAllNotes()
-        configureSearchBar()
+//        configureSearchBar()
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Notes"
         DispatchQueue.main.async {
             self.collectionView?.reloadData()
         }
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAdd))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(didTapAdd))
     }
     
     // MARK: - Layout
@@ -60,18 +67,16 @@ class NotesListViewController: UIViewController {
         layout.itemSize = CGSize(width: (view.frame.size.width - 20), height: 65)
     }
     
-    private func configureSearchBar() {
-        navigationItem.searchController = searchController
-
-        searchController.searchResultsUpdater = self
-        navigationItem.hidesSearchBarWhenScrolling = false
-        searchController.showsSearchResultsController = true
-        searchController.obscuresBackgroundDuringPresentation = false
-        definesPresentationContext = true
-        
-        searchController.searchBar.delegate = self
-
-    }
+//    private func configureSearchBar() {
+//        navigationItem.searchController = searchController
+//        
+//        searchController.searchResultsUpdater = self
+//        navigationItem.hidesSearchBarWhenScrolling = false
+//        searchController.showsSearchResultsController = true
+//        searchController.obscuresBackgroundDuringPresentation = false
+//        definesPresentationContext = true
+//        searchController.searchBar.delegate = self
+//    }
     
     private func firstLaunchCheck() {
         let defaults = UserDefaults.standard
@@ -89,7 +94,7 @@ class NotesListViewController: UIViewController {
     private func goToEditNoteVC(note: NoteItem) {
         let editingVC = EditNoteViewController()
         editingVC.note = note
-//        editingVC.delegate = self
+        editingVC.delegate = self
         navigationController?.pushViewController(editingVC, animated: true)
     }
     
@@ -100,7 +105,7 @@ class NotesListViewController: UIViewController {
         return note
     }
 
-    func getAllNotes() {
+    private func getAllNotes() {
         dataManager.loadNotes { result in
             switch result {
             case .success(let notes):
@@ -142,7 +147,9 @@ extension NotesListViewController: UICollectionViewDataSource {
 
 extension NotesListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        goToEditNoteVC(note: createNote())
+        goToEditNoteVC(note: notes[indexPath.row])
+        collectionView.deselectItem(at: indexPath, animated: true)
+        collectionView.reloadItems(at: [indexPath])
     }
 }
 
