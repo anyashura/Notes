@@ -18,25 +18,24 @@ class NotesListViewController: UIViewController {
     var notes = [NoteItem]()
     var filteredNotes = [NoteItem]()
     let dataManager = CoreDataManager.shared
-    private let editingVC = EditNoteViewController()
-    let searchController = UISearchController()
-    private let searchBar: UISearchBar = {
-        let search = UISearchBar()
-        search.placeholder = "Search"
-        search.isTranslucent = true
-        return search
-    }()
     
+    private let editingVC = EditNoteViewController()
+    private let searchController = UISearchController(searchResultsController: nil)
+    private var filterIsActive: Bool {
+        searchController.isActive
+    }
     private var collectionView: UICollectionView?
     
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        firstLaunchCheck()
-        configureCollection()
+        view.backgroundColor = .white
         getAllNotes()
-//        configureSearchBar()
+        firstLaunchCheck()
+        
+        configureCollection()
+        configureSearchBar()
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Notes"
         DispatchQueue.main.async {
@@ -49,7 +48,7 @@ class NotesListViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        collectionView?.frame = view.bounds
+        addConstraints()
     }
     
     // MARK: - Methods
@@ -67,16 +66,14 @@ class NotesListViewController: UIViewController {
         layout.itemSize = CGSize(width: (view.frame.size.width - 20), height: 65)
     }
     
-//    private func configureSearchBar() {
-//        navigationItem.searchController = searchController
-//        
-//        searchController.searchResultsUpdater = self
-//        navigationItem.hidesSearchBarWhenScrolling = false
-//        searchController.showsSearchResultsController = true
-//        searchController.obscuresBackgroundDuringPresentation = false
-//        definesPresentationContext = true
-//        searchController.searchBar.delegate = self
-//    }
+    private func configureSearchBar() {
+        navigationItem.searchController = searchController
+        searchController.searchResultsUpdater = self
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.showsSearchResultsController = true
+        searchController.obscuresBackgroundDuringPresentation = false
+        definesPresentationContext = true
+    }
     
     private func firstLaunchCheck() {
         let defaults = UserDefaults.standard
@@ -96,6 +93,9 @@ class NotesListViewController: UIViewController {
         editingVC.note = note
         editingVC.delegate = self
         navigationController?.pushViewController(editingVC, animated: true)
+//        self.searchBar.text = nil
+//        self.searchBar.searchTextField.endEditing(true)
+        self.collectionView?.reloadData()
     }
     
     private func createNote() -> NoteItem {
@@ -133,6 +133,14 @@ extension NotesListViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as? NotesListCollectionViewCell else {
             return UICollectionViewCell()
         }
+        
+        if filterIsActive {
+            print(filteredNotes.count)
+            print(indexPath.row)
+            cell.setup(note: filteredNotes[indexPath.row])
+            return cell
+        }
+        
         let note = notes[indexPath.row]
         cell.setup(note: note)
         return cell
@@ -140,14 +148,22 @@ extension NotesListViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print(notes.count)
+        if filterIsActive {
+            return filteredNotes.count
+        }
         return notes.count
     }
 }
 
 extension NotesListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        goToEditNoteVC(note: notes[indexPath.row])
+        if filterIsActive {
+            goToEditNoteVC(note: filteredNotes[indexPath.row])
+            self.searchController.isActive = false
+        } else {
+            goToEditNoteVC(note: notes[indexPath.row])
+
+        }
         collectionView.deselectItem(at: indexPath, animated: true)
         collectionView.reloadItems(at: [indexPath])
     }
@@ -167,6 +183,16 @@ extension NotesListViewController: NotesListDelegate {
     }
 }
 
+extension NotesListViewController {
+    func addConstraints() {
+        
+        collectionView?.snp.makeConstraints {
+            $0.top.equalTo(view)
+            $0.left.right.bottom.equalToSuperview().inset(10)
+        }
+    }
+}
+
 extension NotesListViewController: UISearchResultsUpdating, UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
@@ -174,7 +200,7 @@ extension NotesListViewController: UISearchResultsUpdating, UISearchBarDelegate 
     }
     
     func filterCounterForSearchText(_ searchText: String) {
-        filteredNotes = notes.filter { $0.title!.lowercased().contains(searchText.lowercased()) }
+        filteredNotes = notes.filter { ($0.details?.lowercased().contains(searchText.lowercased()))! || ($0.title?.lowercased().contains(searchText.lowercased()))! }
         collectionView?.reloadData()
     }
 }

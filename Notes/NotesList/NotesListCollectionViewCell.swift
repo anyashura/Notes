@@ -66,11 +66,7 @@ class NotesListCollectionViewCell: UICollectionViewCell {
     func setup(note: NoteItem) {
         titleLabel.text = note.title
         descriptionLabel.text = note.details
-        
-        let date = DateFormatter()
-        date.dateFormat = "dd/MM/yy h:mm a"
-        let dateSaved = date.string(from: note.date ?? Date())
-        dateLabel.text = dateSaved
+        dateLabel.text = formattedDate(note: note)
     }
     
     override func awakeFromNib() {
@@ -105,5 +101,15 @@ extension NotesListCollectionViewCell {
             $0.left.equalTo(dateLabel.snp.right)
             $0.right.bottom.equalTo(contentView)
         }
+    }
+}
+
+extension NotesListCollectionViewCell {
+    
+    func formattedDate(note: NoteItem) -> String {
+        let date = DateFormatter()
+        date.dateFormat = "dd/MM/yy h:mm a"
+        let dateSaved = date.string(from: note.date ?? Date())
+        return dateSaved
     }
 }
