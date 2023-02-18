@@ -20,6 +20,8 @@
 		B5333493299970BA00CEC638 /* NoteItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5333491299970BA00CEC638 /* NoteItem+CoreDataProperties.swift */; };
 		B5333497299A669E00CEC638 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5333496299A669E00CEC638 /* CoreDataManager.swift */; };
 		B5333499299C205B00CEC638 /* NotesListDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5333498299C205B00CEC638 /* NotesListDelegate.swift */; };
+		B533349C29A0C9F700CEC638 /* ImagePickerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B533349B29A0C9F600CEC638 /* ImagePickerManager.swift */; };
+		B53334A229A1266D00CEC638 /* ExtensionsForEditNoteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B53334A129A1266D00CEC638 /* ExtensionsForEditNoteVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +40,8 @@
 		B5333491299970BA00CEC638 /* NoteItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NoteItem+CoreDataProperties.swift"; path = "Notes/Models/NoteItem+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		B5333496299A669E00CEC638 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		B5333498299C205B00CEC638 /* NotesListDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesListDelegate.swift; sourceTree = "<group>"; };
+		B533349B29A0C9F600CEC638 /* ImagePickerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerManager.swift; sourceTree = "<group>"; };
+		B53334A129A1266D00CEC638 /* ExtensionsForEditNoteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsForEditNoteVC.swift; sourceTree = "<group>"; };
 		E2F48E0C8D53AC18A23F4C02 /* Pods-Notes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notes.release.xcconfig"; path = "Target Support Files/Pods-Notes/Pods-Notes.release.xcconfig"; sourceTree = "<group>"; };
 		E94645DDDEE1B3AEE1C632C0 /* Pods_Notes.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Notes.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -75,12 +79,12 @@
 		B533346B29996AC100CEC638 /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				B533349D29A101FD00CEC638 /* Services */,
 				B533349A299C260000CEC638 /* Models */,
-				B533346C29996AC100CEC638 /* AppDelegate.swift */,
-				B533346E29996AC100CEC638 /* SceneDelegate.swift */,
-				B533348629996BE700CEC638 /* EditNoteViewController.swift */,
+				B53334A029A102C400CEC638 /* Delegates */,
+				B533349E29A1022100CEC638 /* Note */,
 				B53334942999718D00CEC638 /* NotesList */,
-				B533347829996AC300CEC638 /* Assets.xcassets */,
+				B533349F29A102A800CEC638 /* Resources */,
 				B533347A29996AC300CEC638 /* LaunchScreen.storyboard */,
 				B533347D29996AC300CEC638 /* Info.plist */,
 				B533347529996AC100CEC638 /* Notes.xcdatamodeld */,
@@ -102,10 +106,45 @@
 			isa = PBXGroup;
 			children = (
 				B5333490299970BA00CEC638 /* NoteItem+CoreDataClass.swift */,
-				B5333496299A669E00CEC638 /* CoreDataManager.swift */,
 				B5333491299970BA00CEC638 /* NoteItem+CoreDataProperties.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		B533349D29A101FD00CEC638 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B5333496299A669E00CEC638 /* CoreDataManager.swift */,
+				B533349B29A0C9F600CEC638 /* ImagePickerManager.swift */,
+			);
+			name = Services;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		B533349E29A1022100CEC638 /* Note */ = {
+			isa = PBXGroup;
+			children = (
+				B533348629996BE700CEC638 /* EditNoteViewController.swift */,
+				B53334A129A1266D00CEC638 /* ExtensionsForEditNoteVC.swift */,
+			);
+			path = Note;
+			sourceTree = "<group>";
+		};
+		B533349F29A102A800CEC638 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B533347829996AC300CEC638 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B53334A029A102C400CEC638 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				B533346C29996AC100CEC638 /* AppDelegate.swift */,
+				B533346E29996AC100CEC638 /* SceneDelegate.swift */,
+			);
+			path = Delegates;
 			sourceTree = "<group>";
 		};
 		C22CD3B8A8D14A3DE3A61897 /* Frameworks */ = {
@@ -137,6 +176,7 @@
 				B533346629996AC100CEC638 /* Frameworks */,
 				B533346729996AC100CEC638 /* Resources */,
 				DBC8373031426309677EB463 /* [CP] Embed Pods Frameworks */,
+				B53334A629A12D3F00CEC638 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -193,6 +233,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		B53334A629A12D3F00CEC638 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n";
+		};
 		CB5ED97C4652B816CBC38272 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -239,9 +296,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B533349C29A0C9F700CEC638 /* ImagePickerManager.swift in Sources */,
 				B5333499299C205B00CEC638 /* NotesListDelegate.swift in Sources */,
 				B533347129996AC100CEC638 /* NotesListViewController.swift in Sources */,
 				B533348529996BBA00CEC638 /* NotesListCollectionViewCell.swift in Sources */,
+				B53334A229A1266D00CEC638 /* ExtensionsForEditNoteVC.swift in Sources */,
 				B533346D29996AC100CEC638 /* AppDelegate.swift in Sources */,
 				B533346F29996AC100CEC638 /* SceneDelegate.swift in Sources */,
 				B5333493299970BA00CEC638 /* NoteItem+CoreDataProperties.swift in Sources */,

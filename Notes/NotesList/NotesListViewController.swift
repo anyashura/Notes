@@ -9,49 +9,55 @@ import UIKit
 import SnapKit
 import CoreData
 
-class NotesListViewController: UIViewController {
+final class NotesListViewController: UIViewController {
+    // MARK: - Enum
+    private enum Constants {
+        static let cellID = "cellID"
+        static let title = "Notes"
+        static let newNote = "square.and.pencil"
+        static let firstLaunchKey = "firstLaunch"
+    }
 
     // MARK: - Properties
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    let cellID = "cellID"
-    var notes = [NoteItem]()
-    var filteredNotes = [NoteItem]()
-    let dataManager = CoreDataManager.shared
     
+    private let dataManager = CoreDataManager.shared
     private let editingVC = EditNoteViewController()
     private let searchController = UISearchController(searchResultsController: nil)
+    private var notes = [NoteItem]()
+    private var filteredNotes = [NoteItem]()
+    private var collectionView: UICollectionView?
     private var filterIsActive: Bool {
         searchController.isActive
     }
-    private var collectionView: UICollectionView?
-    
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        configureView()
         getAllNotes()
         firstLaunchCheck()
-        
         configureCollection()
         configureSearchBar()
-        navigationController?.navigationBar.prefersLargeTitles = true
-        title = "Notes"
-        DispatchQueue.main.async {
-            self.collectionView?.reloadData()
-        }
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(didTapAdd))
     }
     
     // MARK: - Layout
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        addConstraints()
+        addConstraintsForCollectionView()
     }
     
     // MARK: - Methods
+    
+    // Configure UI
+    private func configureView() {
+        view.backgroundColor = .white
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: Constants.newNote), style: .plain, target: self, action: #selector(didTapAdd))
+        title = Constants.title
+    }
     
     private func configureCollection() {
         let layout = UICollectionViewFlowLayout()
@@ -61,7 +67,7 @@ class NotesListViewController: UIViewController {
         collectionView?.backgroundColor = .white
         collectionView?.showsVerticalScrollIndicator = false
 
-        collectionView?.register(NotesListCollectionViewCell.self, forCellWithReuseIdentifier: cellID)
+        collectionView?.register(NotesListCollectionViewCell.self, forCellWithReuseIdentifier: Constants.cellID)
         view.addSubview(collectionView ?? UICollectionView())
         layout.itemSize = CGSize(width: (view.frame.size.width - 20), height: 65)
     }
@@ -75,36 +81,38 @@ class NotesListViewController: UIViewController {
         definesPresentationContext = true
     }
     
+    // Check if there aren't notes and add it
     private func firstLaunchCheck() {
         let defaults = UserDefaults.standard
-        if defaults.bool(forKey: "firstLaunch") != true {
-            defaults.set(true, forKey: "firstLaunch")
+        if defaults.bool(forKey: Constants.firstLaunchKey) != true {
+            defaults.set(true, forKey: Constants.firstLaunchKey)
             let note = dataManager.createNote(name: "First", text: "Hello")
             notes.insert(note, at: 0)
         }
     }
     
+    // Add new note
     @objc func didTapAdd() {
         goToEditNoteVC(note: createNote())
     }
-    
+    // Edit note
     private func goToEditNoteVC(note: NoteItem) {
         let editingVC = EditNoteViewController()
         editingVC.note = note
         editingVC.delegate = self
         navigationController?.pushViewController(editingVC, animated: true)
-//        self.searchBar.text = nil
-//        self.searchBar.searchTextField.endEditing(true)
         self.collectionView?.reloadData()
     }
     
+    // Create new note
     private func createNote() -> NoteItem {
         let note = dataManager.createNote()
         notes.insert(note, at: 0)
         collectionView?.insertItems(at: [IndexPath.init(row: 0, section: 0)])
         return note
     }
-
+    
+    // Load all note (Core Data)
     private func getAllNotes() {
         dataManager.loadNotes { result in
             switch result {
@@ -119,6 +127,7 @@ class NotesListViewController: UIViewController {
         }
     }
     
+    //Make id for note
     private func indexForNote(id: UUID, notes: [NoteItem]) -> IndexPath {
         let row = Int(notes.firstIndex(where: { $0.identifier == id }) ?? 0)
         return IndexPath(row: row, section: 0)
@@ -126,11 +135,10 @@ class NotesListViewController: UIViewController {
 }
 
     // MARK: - Extensions
-
 extension NotesListViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as? NotesListCollectionViewCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellID, for: indexPath) as? NotesListCollectionViewCell else {
             return UICollectionViewCell()
         }
         
@@ -144,7 +152,6 @@ extension NotesListViewController: UICollectionViewDataSource {
         let note = notes[indexPath.row]
         cell.setup(note: note)
         return cell
-
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -170,7 +177,6 @@ extension NotesListViewController: UICollectionViewDelegate {
 }
 
 extension NotesListViewController: NotesListDelegate {
-    
     func updateNotes() {
         notes = notes.sorted { $0.date ?? Date() > $1.date ?? Date() }
         collectionView?.reloadData()
@@ -184,8 +190,7 @@ extension NotesListViewController: NotesListDelegate {
 }
 
 extension NotesListViewController {
-    func addConstraints() {
-        
+    func addConstraintsForCollectionView() {
         collectionView?.snp.makeConstraints {
             $0.top.equalTo(view)
             $0.left.right.bottom.equalToSuperview().inset(10)
@@ -196,10 +201,10 @@ extension NotesListViewController {
 extension NotesListViewController: UISearchResultsUpdating, UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
-        filterCounterForSearchText(text)
+        filterSearchText(text)
     }
     
-    func filterCounterForSearchText(_ searchText: String) {
+    func filterSearchText(_ searchText: String) {
         filteredNotes = notes.filter { ($0.details?.lowercased().contains(searchText.lowercased()))! || ($0.title?.lowercased().contains(searchText.lowercased()))! }
         collectionView?.reloadData()
     }

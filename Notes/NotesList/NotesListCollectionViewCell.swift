@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class NotesListCollectionViewCell: UICollectionViewCell {
+final class NotesListCollectionViewCell: UICollectionViewCell {
     // MARK: - Properties
 
     private let titleLabel: UILabel = {
