@@ -16,6 +16,8 @@ final class EditNoteViewController: UIViewController {
         static let backChevron = "chevron.backward"
         static let pickPhoto = "photo.on.rectangle"
         static let fontName = "Arial"
+        static let decreaseFontSize = "textformat.size.smaller"
+        static let increaseFontSize = "textformat.size.larger"
     }
     
     // MARK: - Properties
@@ -122,7 +124,7 @@ final class EditNoteViewController: UIViewController {
     }
     
     private func configureDecreaseFontSizeButton() {
-        if let image = UIImage(systemName: "textformat.size.smaller") {
+        if let image = UIImage(systemName: Constants.decreaseFontSize) {
             decreaseFontSizeButton.setImage(image, for: .normal)
         }
         decreaseFontSizeButton.backgroundColor = .gray.withAlphaComponent(0.1)
@@ -133,7 +135,7 @@ final class EditNoteViewController: UIViewController {
     }
     
     private func configureIncreaseFontSizeButton() {
-        if let image = UIImage(systemName: "textformat.size.larger") {
+        if let image = UIImage(systemName: Constants.increaseFontSize) {
             increaseFontSizeButton.setImage(image, for: .normal)
         }
         increaseFontSizeButton.backgroundColor = .gray.withAlphaComponent(0.1)
@@ -211,7 +213,6 @@ final class EditNoteViewController: UIViewController {
             UserDefaults.standard.setValue(fontSize, forKeyPath: idFontKey)
         }
     }
-    
     
     // Pick picture
     @objc func addPicture(_ sender: UIButton) {
@@ -299,7 +300,7 @@ final class EditNoteViewController: UIViewController {
  // MARK: - Extension
 
 extension EditNoteViewController {
-    // MARK: - Gestures
+    // MARK: - Gesture
     func addGestureForExit() {
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(updateOrDeleteNote))
         swipeRight.direction = .right
