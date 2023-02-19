@@ -16,7 +16,7 @@ class CoreDataManager {
     var persistentContainer: NSPersistentContainer = {
 
         let container = NSPersistentContainer(name: "Notes")
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        container.loadPersistentStores(completionHandler: { (_, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
@@ -44,7 +44,7 @@ class CoreDataManager {
     // Load notes from Core Data
     func loadNotes(completion: (Result<[NoteItem], Error>) -> Void) {
         
-        let fetchRequest:NSFetchRequest<NoteItem> = NoteItem.fetchRequest()
+        let fetchRequest: NSFetchRequest<NoteItem> = NoteItem.fetchRequest()
         do {
             let sortDescriptor = NSSortDescriptor(keyPath: \NoteItem.date, ascending: false)
             fetchRequest.sortDescriptors = [sortDescriptor]
@@ -64,8 +64,7 @@ class CoreDataManager {
         newNote.details = text
         do {
             try context.save()
-        }
-        catch {
+        } catch {
             print("cannot create note")
         }
         return newNote
@@ -75,8 +74,7 @@ class CoreDataManager {
         context.delete(note)
         do {
             try context.save()
-        }
-        catch {
+        } catch {
             print("cannot fetch from database")
         }
     }
@@ -88,8 +86,7 @@ class CoreDataManager {
         note.identifier = UUID()
         do {
             try context.save()
-        }
-        catch {
+        } catch {
             print("cannot fetch from database")
         }
     }

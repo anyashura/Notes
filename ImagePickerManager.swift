@@ -8,26 +8,25 @@
 import Foundation
 import UIKit
 
-
 final class ImagePickerManager: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     private let picker = UIImagePickerController()
     private let alert = UIAlertController(title: "Choose Image", message: nil, preferredStyle: .actionSheet)
     private var viewController: UIViewController?
-    private var pickImageCompletion : ((UIImage) -> ())?
+    private var pickImageCompletion: ((UIImage) -> Void)?
     
     override init() {
         super.init()
         let cameraAction = UIAlertAction(title: "Camera", style: .default) {
-            UIAlertAction in
+            _ in
             self.openCamera()
         }
         let galleryAction = UIAlertAction(title: "Gallery", style: .default) {
-            UIAlertAction in
+            _ in
             self.openGallery()
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) {
-            UIAlertAction in
+            _ in
         }
 
         picker.delegate = self
@@ -36,7 +35,7 @@ final class ImagePickerManager: NSObject, UIImagePickerControllerDelegate, UINav
         alert.addAction(cancelAction)
     }
 
-    func pickImage(_ viewController: UIViewController, _ completion: @escaping ((UIImage) -> ())) {
+    func pickImage(_ viewController: UIViewController, _ completion: @escaping ((UIImage) -> Void)) {
         pickImageCompletion = completion
         self.viewController = viewController
 
@@ -44,9 +43,9 @@ final class ImagePickerManager: NSObject, UIImagePickerControllerDelegate, UINav
 
         viewController.present(alert, animated: true, completion: nil)
     }
-    func openCamera(){
+    func openCamera() {
         alert.dismiss(animated: true, completion: nil)
-        if(UIImagePickerController .isSourceTypeAvailable(.camera)) {
+        if UIImagePickerController .isSourceTypeAvailable(.camera) {
             picker.sourceType = .camera
             self.viewController?.present(picker, animated: true, completion: nil)
         } else {
@@ -64,13 +63,12 @@ final class ImagePickerManager: NSObject, UIImagePickerControllerDelegate, UINav
         picker.sourceType = .photoLibrary
         self.viewController?.present(picker, animated: true, completion: nil)
     }
-
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true, completion: nil)
         guard let image = info[.originalImage] as? UIImage else {
             fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")

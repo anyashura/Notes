@@ -20,7 +20,7 @@ final class NotesListViewController: UIViewController {
 
     // MARK: - Properties
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     
     private let dataManager = CoreDataManager.shared
     private let editingVC = EditNoteViewController()
@@ -127,7 +127,7 @@ final class NotesListViewController: UIViewController {
         }
     }
     
-    //Make id for note
+    // Make id for note
     private func indexForNote(id: UUID, notes: [NoteItem]) -> IndexPath {
         let row = Int(notes.firstIndex(where: { $0.identifier == id }) ?? 0)
         return IndexPath(row: row, section: 0)
@@ -209,6 +209,3 @@ extension NotesListViewController: UISearchResultsUpdating, UISearchBarDelegate 
         collectionView?.reloadData()
     }
 }
-
-
-

@@ -49,7 +49,7 @@ final class EditNoteViewController: UIViewController {
     
     // MARK: - Methods
     
-    //Configure UI
+    // Configure UI
     private func configureView() {
         view.backgroundColor = .white
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -167,7 +167,7 @@ final class EditNoteViewController: UIViewController {
     
     // Pick picture
     @objc func addPicture(_ sender: UIButton) {
-        ImagePickerManager().pickImage(self){ image in
+        ImagePickerManager().pickImage(self) { image in
             let resizedImage = image.resizeImage(targetSize: .init(width: self.textView.bounds.width - 30, height: self.textView.bounds.height - 20))
             self.addToTextView(image: resizedImage)
         }
@@ -204,7 +204,7 @@ final class EditNoteViewController: UIViewController {
         return NSAttributedString()
     }
             
-    //MARK: - Alert for deleting
+    // MARK: - Alert for deleting
     
     @objc private func showAlertWhenDelete() {
         let alert = UIAlertController(title: "Delete this note?", message: nil, preferredStyle: .alert)
@@ -218,7 +218,7 @@ final class EditNoteViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    //MARK: - Notifications
+    // MARK: - Notifications
     
     private func registerKeyboardNotifications() {
         NotificationCenter.default.addObserver(
@@ -238,7 +238,7 @@ final class EditNoteViewController: UIViewController {
     
     @objc private func updateTextView(_ notification: Notification) {
         let info = notification.userInfo
-        let keyboardSize = (info![UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        guard let keyboardSize = (info![UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         let keyboardFrame = self.view.convert(keyboardSize, to: view.window)
         if notification.name == UIResponder.keyboardWillHideNotification {
             textView.contentInset = UIEdgeInsets.zero
@@ -252,7 +252,7 @@ final class EditNoteViewController: UIViewController {
  // MARK: - Extension
 
 extension EditNoteViewController {
-    //MARK: - Gestures
+    // MARK: - Gestures
     func addGestureForExit() {
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(updateOrDeleteNote))
         swipeRight.direction = .right
