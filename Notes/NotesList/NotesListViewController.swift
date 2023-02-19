@@ -26,7 +26,7 @@ final class NotesListViewController: UIViewController {
     private let editingVC = EditNoteViewController()
     private let searchController = UISearchController(searchResultsController: nil)
     private var notes = [NoteItem]()
-    private var filteredNotes = [NoteItem]()
+    private var searchedNotes = [NoteItem]()
     private var collectionView: UICollectionView?
     private var filterIsActive: Bool {
         searchController.isActive
@@ -143,9 +143,9 @@ extension NotesListViewController: UICollectionViewDataSource {
         }
         
         if filterIsActive {
-            print(filteredNotes.count)
+            print(searchedNotes.count)
             print(indexPath.row)
-            cell.setup(note: filteredNotes[indexPath.row])
+            cell.setup(note: searchedNotes[indexPath.row])
             return cell
         }
         
@@ -156,7 +156,7 @@ extension NotesListViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if filterIsActive {
-            return filteredNotes.count
+            return searchedNotes.count
         }
         return notes.count
     }
@@ -165,7 +165,7 @@ extension NotesListViewController: UICollectionViewDataSource {
 extension NotesListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if filterIsActive {
-            goToEditNoteVC(note: filteredNotes[indexPath.row])
+            goToEditNoteVC(note: searchedNotes[indexPath.row])
             self.searchController.isActive = false
         } else {
             goToEditNoteVC(note: notes[indexPath.row])
@@ -205,7 +205,7 @@ extension NotesListViewController: UISearchResultsUpdating, UISearchBarDelegate 
     }
     
     func filterSearchText(_ searchText: String) {
-        filteredNotes = notes.filter { ($0.details?.lowercased().contains(searchText.lowercased()))! || ($0.title?.lowercased().contains(searchText.lowercased()))! }
+        searchedNotes = notes.filter { ($0.details?.lowercased().contains(searchText.lowercased()))! || ($0.title?.lowercased().contains(searchText.lowercased()))! }
         collectionView?.reloadData()
     }
 }
