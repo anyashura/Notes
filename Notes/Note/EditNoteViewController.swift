@@ -22,10 +22,15 @@ final class EditNoteViewController: UIViewController {
     var note: NoteItem?
     weak var delegate: NotesListDelegate?
     let pickImageButton = UIButton(type: .custom)
+    let decreaseFontSizeButton = UIButton(type: .custom)
+    let increaseFontSizeButton = UIButton(type: .custom)
     lazy var titleTextField = UITextField()
     lazy var textView = UITextView()
+    lazy var fontSize: CGFloat = UserDefaults.standard.value(forKey: idFontKey) as? CGFloat ?? 17.0
+    
     private let dataManager = CoreDataManager.shared
     private lazy var idKey = note?.identifier?.uuidString ?? "default"
+    private lazy var idFontKey = (note?.identifier?.uuidString ?? "Font") + "Font"
     private var tapDone = false
 
     // MARK: - LifeCycle
@@ -59,6 +64,8 @@ final class EditNoteViewController: UIViewController {
         configureBackButton()
         configureDoneAndDeleteButtons()
         configurePickButton()
+        configureDecreaseFontSizeButton()
+        configureIncreaseFontSizeButton()
     }
     
     private func configureTitleField() {
@@ -67,7 +74,7 @@ final class EditNoteViewController: UIViewController {
         titleTextField.backgroundColor = .gray.withAlphaComponent(0.1)
         titleTextField.layer.cornerRadius = 10
         titleTextField.layer.borderWidth = 1.0
-        titleTextField.font = UIFont(name: Constants.fontName, size: 17.0)
+        titleTextField.font = UIFont(name: Constants.fontName, size: fontSize)
         titleTextField.setLeftPaddingPoints(15)
         titleTextField.autocorrectionType = .no
         titleTextField.layer.borderColor = UIColor.lightGray.cgColor
@@ -80,7 +87,7 @@ final class EditNoteViewController: UIViewController {
         textView.layer.cornerRadius = 10
         textView.layer.borderWidth = 1.0
         textView.backgroundColor = .gray.withAlphaComponent(0.1)
-        textView.font = UIFont(name: Constants.fontName, size: 17.0)
+        textView.font = UIFont(name: Constants.fontName, size: fontSize)
         textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 20)
         textView.layer.borderColor = UIColor.lightGray.cgColor
         textView.autocorrectionType = .no
@@ -112,6 +119,28 @@ final class EditNoteViewController: UIViewController {
         pickImageButton.layer.borderColor = UIColor.lightGray.cgColor
         pickImageButton.layer.borderWidth = 1
         pickImageButton.addTarget(self, action: #selector(addPicture), for: .touchUpInside)
+    }
+    
+    private func configureDecreaseFontSizeButton() {
+        if let image = UIImage(systemName: "textformat.size.smaller") {
+            decreaseFontSizeButton.setImage(image, for: .normal)
+        }
+        decreaseFontSizeButton.backgroundColor = .gray.withAlphaComponent(0.1)
+        decreaseFontSizeButton.layer.cornerRadius = 3
+        decreaseFontSizeButton.layer.borderColor = UIColor.lightGray.cgColor
+        decreaseFontSizeButton.layer.borderWidth = 1
+        decreaseFontSizeButton.addTarget(self, action: #selector(decreaseFontSize), for: .touchUpInside)
+    }
+    
+    private func configureIncreaseFontSizeButton() {
+        if let image = UIImage(systemName: "textformat.size.larger") {
+            increaseFontSizeButton.setImage(image, for: .normal)
+        }
+        increaseFontSizeButton.backgroundColor = .gray.withAlphaComponent(0.1)
+        increaseFontSizeButton.layer.cornerRadius = 3
+        increaseFontSizeButton.layer.borderColor = UIColor.lightGray.cgColor
+        increaseFontSizeButton.layer.borderWidth = 1
+        increaseFontSizeButton.addTarget(self, action: #selector(increaseFontSize), for: .touchUpInside)
     }
     
     // Core Data
@@ -164,6 +193,25 @@ final class EditNoteViewController: UIViewController {
             textView.resignFirstResponder()
         }
     }
+    // Change font size
+    @objc func decreaseFontSize(_ sender: UIButton) {
+        if fontSize >= 10 {
+            fontSize = fontSize - 2.0
+            titleTextField.font = UIFont(name: Constants.fontName, size: fontSize)
+            textView.font = UIFont(name: Constants.fontName, size: fontSize)
+            UserDefaults.standard.setValue(fontSize, forKeyPath: idFontKey)
+        }
+    }
+    
+    @objc func increaseFontSize(_ sender: UIButton) {
+        if fontSize <= 30 {
+            fontSize = fontSize + 2.0
+            titleTextField.font = UIFont(name: Constants.fontName, size: fontSize)
+            textView.font = UIFont(name: Constants.fontName, size: fontSize)
+            UserDefaults.standard.setValue(fontSize, forKeyPath: idFontKey)
+        }
+    }
+    
     
     // Pick picture
     @objc func addPicture(_ sender: UIButton) {
@@ -200,7 +248,6 @@ final class EditNoteViewController: UIViewController {
                 print("error: ", error)
             }
         }
-
         return NSAttributedString()
     }
             

@@ -18,6 +18,8 @@ extension EditNoteViewController {
         setConstraintsForTextField()
         setConstraintsForTextView()
         setConstraintsForPickButton()
+        setConstraintsForDecreaseFontSizeButton()
+        setConstraintsForIncreaseFontSizeButton()
     }
     
     func setConstraintsForTextView() {
@@ -49,6 +51,24 @@ extension EditNoteViewController {
             $0.height.width.equalTo(40)
         }
     }
+    
+    func setConstraintsForDecreaseFontSizeButton() {
+        view.addSubview(decreaseFontSizeButton)
+        decreaseFontSizeButton.snp.makeConstraints {
+            $0.top.equalTo(textView.snp.bottom).offset(20)
+            $0.left.equalTo(textView.snp.left)
+            $0.height.width.equalTo(20)
+        }
+    }
+    
+    func setConstraintsForIncreaseFontSizeButton() {
+        view.addSubview(increaseFontSizeButton)
+        increaseFontSizeButton.snp.makeConstraints {
+            $0.top.equalTo(textView.snp.bottom).offset(20)
+            $0.left.equalTo(decreaseFontSizeButton.snp.right).offset(1)
+            $0.height.width.equalTo(20)
+        }
+    }
 }
 
 extension UITextField {
@@ -68,12 +88,10 @@ extension UIImage {
       let heightRatio = targetSize.height / size.height
       let newSize = widthRatio > heightRatio ?  CGSize(width: size.width * heightRatio, height: size.height * heightRatio) : CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
       let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
-
       UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
       self.draw(in: rect)
       let newImage = UIGraphicsGetImageFromCurrentImageContext()
       UIGraphicsEndImageContext()
-
       return newImage!
     }
 }
